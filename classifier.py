@@ -12,13 +12,17 @@ df = pd.read_csv('data.csv')
 
 # ===============================
 
-prices = df['lable']
-features = df.drop('lable', axis = 1)
+df_lables = df['lable']
+df_features = df.drop('lable', axis = 1)
 
-features = np.array(features)
-prices = np.array(prices)
+features = np.array(df_features)
+lables = np.array(df_lables)
 
 kf = KFold(653, n_folds=10)
+
+w1 = 0.3
+w2 = 0.4
+w3 = 0.3
 
 acc = 0
 score = 0
@@ -26,26 +30,33 @@ score = 0
 for train_index, test_index in kf:
 
 	X_train, X_test = features[train_index], features[test_index]
-	y_train, y_test = prices[train_index], prices[test_index] 
+	y_train, y_test = lables[train_index], lables[test_index] 
 
-	if False:
-		clf = GaussianNB()
-		clf.fit(X_train, y_train)
+	# naive_bayes---1
+	clf_1 = GaussianNB()
+	clf_1.fit(X_train, y_train)
+	y_predict_1 = clf_1.predict(X_test)
 
-		y_predict = clf.predict(X_test)
 
+	# svm---2
+	clf_2 = svm.SVC(kernel="linear")
+	clf_2.fit(X_train, y_train) 
+	y_predict_2 = clf_2.predict(X_test)
 
-	if True:
-		clf = svm.SVC()
-		clf.fit(X_train, y_train) 
+	# DecisionTreeClassifier---3
+	clf_3 = tree.DecisionTreeClassifier()
+	clf_3.fit(X_train, y_train)
+	y_predict_3 = clf_3.predict(X_test)
 
-		y_predict = clf.predict(X_test)
+	# add all
+	y_predict_all = y_predict_1*w1+y_predict_2*w2+y_predict_3*w3
+	y_predict = np.array(y_predict_all)
 
-	if False:
-		clf = tree.DecisionTreeClassifier()
-		clf.fit(X_train, y_train)
-
-		y_predict = clf.predict(X_test)
+	for index in range(len(y_test)):
+		if y_predict_all[index] > 0.5:
+			y_predict[index]=1
+		else:
+			y_predict[index]=0
 
 
 	acc += accuracy_score(y_predict, y_test)
