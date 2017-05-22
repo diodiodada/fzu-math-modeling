@@ -20,6 +20,8 @@ prices = np.array(prices)
 
 kf = KFold(653, n_folds=10)
 
+acc = 0
+score = 0
 
 for train_index, test_index in kf:
 
@@ -33,67 +35,25 @@ for train_index, test_index in kf:
 		y_predict = clf.predict(X_test)
 
 
-	if False:
+	if True:
 		clf = svm.SVC()
 		clf.fit(X_train, y_train) 
 
 		y_predict = clf.predict(X_test)
 
-	if True:
+	if False:
 		clf = tree.DecisionTreeClassifier()
 		clf.fit(X_train, y_train)
 
 		y_predict = clf.predict(X_test)
-		
-
-	acc = accuracy_score(y_predict, y_test)
-
-	score = r2_score(y_predict, y_test)
-
-	print("accuracy:")
-	print( acc )
-
-	print("r2_score:")
-	print( score )
-
-	print("")
 
 
+	acc += accuracy_score(y_predict, y_test)
 
+	score += r2_score(y_predict, y_test)
 
-# ===============================
+print("accuracy:")
+print( acc/10.0 )
 
-# prices = df['lable']
-# features = df.drop('lable', axis = 1)
-# X_train, X_test, y_train, y_test = train_test_split(features,prices,test_size=0.2,random_state=42)
-
-# if False:
-# 	clf = GaussianNB()
-# 	clf.fit(X_train, y_train)
-
-# 	y_predict = clf.predict(X_test)
-
-
-# if False:
-# 	clf = svm.SVC()
-# 	clf.fit(X_train, y_train) 
-
-# 	y_predict = clf.predict(X_test)
-
-# if True:
-# 	clf = tree.DecisionTreeClassifier()
-# 	clf.fit(X_train, y_train)
-
-# 	y_predict = clf.predict(X_test)
-
-
-
-# acc = accuracy_score(y_predict, y_test)
-
-# score = r2_score(y_predict, y_test)
-
-# print("accuracy:")
-# print( acc )
-
-# print("r2_score:")
-# print( score )
+print("r2_score:")
+print( score/10.0 )
